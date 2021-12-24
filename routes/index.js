@@ -7,4 +7,6 @@ router.use('/api', apiRoutes);
 
 router.use((req, res) => {
   console.log('Route not found!');
-})
+});
+
+module.exports = router;
