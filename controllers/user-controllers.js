@@ -68,7 +68,7 @@ const userController = {
 
   addFriend({ params }, res) {
     if (!Types.ObjectId.isValid(params.userId) || !Types.ObjectId.isValid(params.friendId)) {
-      res.status(415).json({ message: 'Invalid  or friend id' });
+      res.status(415).json({ message: 'Invalid user or friend id' });
       return;
     }
     // potential to add non-existant user, think of way to validate
@@ -86,8 +86,23 @@ const userController = {
       })
   },
 
-  removeFriend({ params, body}, res) {
-    res.json({ message: 'removeFriend working' })
+  removeFriend({ params }, res) {
+    if (!Types.ObjectId.isValid(params.userId) || !Types.ObjectId.isValid(params.friendId)) {
+      res.status(415).json({ message: 'Invalid user or friend id' });
+      return;
+    }
+    User.findOneAndUpdate(
+      { _id: params.userId },
+      { $pull: { friends: params.friendId }},
+      { new: true, runValidators: true }
+    )
+      .then(dbUserData => {
+        if (!dbUserData) {
+          res.status(404).json({ message: 'No user found with this id' });
+          return;
+        }
+        res.json(dbUserData)
+      })
   }
 };
 
