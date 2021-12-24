@@ -62,7 +62,20 @@ const thoughtController = {
   },
 
   deleteThought({ params, body}, res) {
-    res.json({ message: 'deleteThought working' })
+    if (!Types.ObjectId.isValid(params.id)) {
+      res.status(415).json({ message: 'Invalid thought id' });
+      return;
+    }
+    Thought.findOneAndDelete({ _id: params.id })
+      .select('-__v')
+      .then(dbThoughtData => {
+        if (!dbThoughtData) {
+          res.status(404).json({ message: 'No thought found with this id' });
+          return;
+        }
+        res.json(dbThoughtData);
+      })
+      .catch(err => res.status(400).json(err));
   },
 
   addReaction({ params, body}, res) {
