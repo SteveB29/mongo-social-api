@@ -22,7 +22,7 @@ router.route('/:id')
   .delete(deleteThought);
 
 // route for reactions through thoughts (should this be own file?)
-router.route(':thoughtId/reactions')
+router.route('/:thoughtId/reactions')
   .post(addReaction)
   .delete(deleteReaction);
 
