@@ -9,8 +9,11 @@ const userController = {
     res.json({ message: 'getUserById working' })
   },
 
-  addUser({ params, body}, res) {
-    res.json({ message: 'addUser working' })
+  addUser({ body }, res) {
+    console.log(body);
+    User.create(body)
+      .then(dbNewUser => res.json(dbNewUser))
+      .catch(err => res.status(400).json(err));
   },
 
   updateUser({ params, body}, res) {
