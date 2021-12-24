@@ -1,5 +1,5 @@
 const { User, Thought, reactionSchema } = require('../models');
-const mongoose = require('mongoose');
+const { Types } = require('mongoose');
 
 const userController = {
   getAllUsers(req, res) {
@@ -11,7 +11,7 @@ const userController = {
 
   getUserById({ params }, res) {
     // checks if params are of valid ObjectId form, if not returns an error
-    if (!mongoose.Types.ObjectId.isValid(params.id)) {
+    if (!Types.ObjectId.isValid(params.id)) {
       res.status(415).json({ message: 'Invalid user id' });
       return;
     }
@@ -34,7 +34,7 @@ const userController = {
   },
 
   updateUser({ params, body}, res) {
-    if (!mongoose.Types.ObjectId.isValid(params.id)) {
+    if (!Types.ObjectId.isValid(params.id)) {
       res.status(415).json({ message: 'Invalid user id' });
       return;
     }
@@ -50,7 +50,7 @@ const userController = {
   },
 
   deleteUser({ params }, res) {
-    if (!mongoose.Types.ObjectId.isValid(params.id)) {
+    if (!Types.ObjectId.isValid(params.id)) {
       res.status(415).json({ message: 'Invalid user id' });
       return;
     }
@@ -66,8 +66,24 @@ const userController = {
     .catch(err =>res.status(400).json(err));
   },
 
-  addFriend({ params, body}, res) {
-    res.json({ message: 'addFriend working' })
+  addFriend({ params }, res) {
+    if (!Types.ObjectId.isValid(params.userId) || !Types.ObjectId.isValid(params.friendId)) {
+      res.status(415).json({ message: 'Invalid  or friend id' });
+      return;
+    }
+    // potential to add non-existant user, think of way to validate
+    User.findOneAndUpdate(
+      { _id: params.userId },
+      { $addToSet: { friends: params.friendId }},
+      { new: true, runValidators: true }
+    )
+      .then(dbUserData => {
+        if (!dbUserData) {
+          res.status(404).json({ message: 'No user found with this id' });
+          return;
+        }
+        res.json(dbUserData)
+      })
   },
 
   removeFriend({ params, body}, res) {
