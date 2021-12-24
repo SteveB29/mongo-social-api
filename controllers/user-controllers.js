@@ -1,4 +1,5 @@
 const { User, Thought, reactionSchema } = require('../models');
+const mongoose = require('mongoose');
 
 const userController = {
   getAllUsers(req, res) {
@@ -9,6 +10,12 @@ const userController = {
   },
 
   getUserById({ params }, res) {
+    console.log(mongoose.Types.ObjectId.isValid(params.id));
+    // checks if params are of valid ObjectId form, if not returns an error
+    if (!mongoose.Types.ObjectId.isValid(params.id)) {
+      res.status(415).json({ message: 'Incorrect id request in params, please use mongoose hexadecimal ObjectId' });
+      return;
+    }
     User.findOne({ _id: params.id })
     .select('-__v')
     .then(dbUserData => {
@@ -18,13 +25,7 @@ const userController = {
       }
       res.json(dbUserData)
     })
-    .catch(err => {
-      if (err.name === "CastError") {
-        res.status(404).json({ message: 'No user found with this id' });
-        return;
-      }
-      res.status(400).json(err)
-    });
+    .catch(err =>res.status(400).json(err));
   },
 
   addUser({ body }, res) {
