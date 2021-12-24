@@ -99,7 +99,23 @@ const thoughtController = {
   },
 
   deleteReaction({ params, body}, res) {
-    res.json({ message: 'deleteReaction working' })
+    if (!Types.ObjectId.isValid(params.thoughtId) || !Types.ObjectId.isValid(body.reactionId)) {
+      res.status(415).json({ message: 'Invalid thought or reaction id' });
+      return;
+    }
+    Thought.findByIdAndUpdate(
+      { _id: params.thoughtId },
+      { $pull: { reactions: { reactionId: body.reactionId } } },
+      { new: true }
+    )
+      .then(dbThoughtData => {
+        if (!dbThoughtData) {
+          res.status(404).json({ message: 'No thought found with this id'});
+          return;
+        }
+        res.json(dbThoughtData);
+      })
+      .catch(err => res.status(400).json(err));
   }
 };
 
