@@ -88,6 +88,7 @@ const thoughtController = {
       { $addToSet: { reactions: body } },
       { new: true, runValidators: true }
     )
+      .select('-__v')
       .then(dbThoughtData => {
         if (!dbThoughtData) {
           res.status(404).json({ message: 'No thought found with this id'});
@@ -108,6 +109,7 @@ const thoughtController = {
       { $pull: { reactions: { reactionId: body.reactionId } } },
       { new: true }
     )
+      .select('-__v')
       .then(dbThoughtData => {
         if (!dbThoughtData) {
           res.status(404).json({ message: 'No thought found with this id'});
