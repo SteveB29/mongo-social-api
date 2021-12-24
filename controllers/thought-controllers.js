@@ -1,4 +1,5 @@
 const { User, Thought, reactionSchema } = require('../models');
+const { Types } = require('mongoose');
 
 const thoughtController = {
   getAllThoughts(req, res) {
@@ -8,8 +9,21 @@ const thoughtController = {
       .catch(err => res.status(400).json(err));
   },
 
-  getThoughtById({ params, body}, res) {
-    res.json({ message: 'getThoughtById working' })
+  getThoughtById({ params }, res) {
+    if (!Types.ObjectId.isValid(params.id)) {
+      res.status(415).json({ message: 'Invalid thought id' });
+      return;
+    }
+    Thought.findOne({ _id: params.id })
+    .select('-__v')
+    .then(dbThoughtData => {
+      if (!dbThoughtData) {
+        res.status(404).json({ message: 'No thought found with this id' });
+        return;
+      }
+      res.json(dbThoughtData)
+    })
+    .catch(err =>res.status(400).json(err));
   },
 
   addThought({ body }, res) {
