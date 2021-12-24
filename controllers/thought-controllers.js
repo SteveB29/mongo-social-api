@@ -46,7 +46,19 @@ const thoughtController = {
   },
 
   updateThought({ params, body}, res) {
-    res.json({ message: 'updateThought working' })
+    if (!Types.ObjectId.isValid(params.id)) {
+      res.status(415).json({ message: 'Invalid thought id' });
+      return;
+    }
+    Thought.findOneAndUpdate({ _id: params.id }, body, { new: true, runValidators: true })
+      .then(dbThoughtData => {
+        if (!dbThoughtData) {
+          res.status(404).json({ message: 'No thought found with this id' });
+          return;
+        }
+        res.json(dbThoughtData);
+      })
+      .catch(err => res.status(400).json(err));
   },
 
   deleteThought({ params, body}, res) {
