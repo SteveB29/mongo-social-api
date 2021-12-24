@@ -37,8 +37,21 @@ const userController = {
     res.json({ message: 'updateUser working' })
   },
 
-  deleteUser({ params, body}, res) {
-    res.json({ message: 'deleteUser working' })
+  deleteUser({ params }, res) {
+    if (!mongoose.Types.ObjectId.isValid(params.id)) {
+      res.status(415).json({ message: 'Invalid user id' });
+      return;
+    }
+    User.findOneAndDelete({ _id: params.id })
+    .select('-__v')
+    .then(dbUserData => {
+      if (!dbUserData) {
+        res.status(404).json({ message: 'No user found with this id' });
+        return;
+      }
+      res.json(dbUserData)
+    })
+    .catch(err =>res.status(400).json(err));
   },
 
   addFriend({ params, body}, res) {
