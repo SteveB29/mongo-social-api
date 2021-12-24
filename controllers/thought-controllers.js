@@ -1,8 +1,11 @@
 const { User, Thought, reactionSchema } = require('../models');
 
 const thoughtController = {
-  getAllThoughts({ params, body}, res) {
-    res.json({ message: 'getAllThoughts working' })
+  getAllThoughts(req, res) {
+    Thought.find({})
+      .select('-__v')
+      .then(dbThoughtData => res.json(dbThoughtData))
+      .catch(err => res.status(400).json(err));
   },
 
   getThoughtById({ params, body}, res) {
