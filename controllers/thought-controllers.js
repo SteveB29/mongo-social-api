@@ -9,8 +9,23 @@ const thoughtController = {
     res.json({ message: 'getThoughtById working' })
   },
 
-  addThought({ params, body}, res) {
-    res.json({ message: 'addThought working' })
+  addThought({ body }, res) {
+    Thought.create(body)
+      .then(({ _id }) => {
+        return User.findOneAndUpdate(
+          { _id: body.userId},
+          { $addToSet: { thoughts: _id } },
+          { new: true }
+        );
+      })
+      .then(newUserData => {
+        if (!newUserData) {
+          res.status(404).json({ message: 'No user found with this id' });
+          return;
+        }
+        res.json(newUserData);
+      })
+      .catch(err => res.json(err));
   },
 
   updateThought({ params, body}, res) {
