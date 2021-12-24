@@ -10,10 +10,9 @@ const userController = {
   },
 
   getUserById({ params }, res) {
-    console.log(mongoose.Types.ObjectId.isValid(params.id));
     // checks if params are of valid ObjectId form, if not returns an error
     if (!mongoose.Types.ObjectId.isValid(params.id)) {
-      res.status(415).json({ message: 'Incorrect id request in params, please use mongoose hexadecimal ObjectId' });
+      res.status(415).json({ message: 'Invalid user id' });
       return;
     }
     User.findOne({ _id: params.id })
