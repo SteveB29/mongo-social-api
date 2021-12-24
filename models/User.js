@@ -28,6 +28,8 @@ const UserSchema = new Schema(
     ]
   },
   {
+    // to remove duplicate id in res
+    id: false,
     toJSON: {
       virtuals: true
     }

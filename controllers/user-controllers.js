@@ -2,7 +2,10 @@ const { User, Thought, reactionSchema } = require('../models');
 
 const userController = {
   getAllUsers({ params, body}, res) {
-    res.json({ message: 'getAllUsers working' })
+    User.find({})
+      .select('-__v')
+      .then(dbUserData => res.json(dbUserData))
+      .catch(err => res.status(400).json(err));
   },
 
   getUserById({ params, body}, res) {
@@ -10,7 +13,6 @@ const userController = {
   },
 
   addUser({ body }, res) {
-    console.log(body);
     User.create(body)
       .then(dbNewUser => res.json(dbNewUser))
       .catch(err => res.status(400).json(err));
