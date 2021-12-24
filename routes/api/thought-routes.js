@@ -1,4 +1,5 @@
 const router = require('express').Router();
+
 const {
   getAllThoughts,
   getThoughtById,
@@ -6,13 +7,13 @@ const {
   updateThought,
   deleteThought,
   addReaction,
-  removeReaction
+  deleteReaction
 } = require('../../controllers/thought-controllers');
 
 // get route and add new thought route, /api/thoughts
 router.route('/')
   .get(getAllThoughts)
-  .post(addThought);
+  .post(addThought); // Make sure to push thoughts _id to user thoughts array field
 
 // routes that need thought id, /api/thoughts/:id
 router.route('/:id')
@@ -22,7 +23,7 @@ router.route('/:id')
 
 // route for reactions through thoughts (should this be own file?)
 router.route(':thoughtId/reactions')
-  .put(addReaction)
-  .delete(removeReaction);
+  .post(addReaction)
+  .delete(deleteReaction);
 
-  module.exports = router;
+module.exports = router;
