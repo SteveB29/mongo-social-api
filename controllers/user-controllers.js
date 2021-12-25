@@ -61,6 +61,13 @@ const userController = {
         res.status(404).json({ message: 'No user found with this id' });
         return;
       }
+      // delete all thoughts associated with removed user
+      // figure out how to use mongoose pre or post middleware to remove thoughts
+      let thoughtsArray = dbUserData.thoughts;
+      thoughtsArray.forEach(thought => {
+        Thought.findOneAndDelete({  _id: thought._id })
+          .then(console.log('Thought Deleted'));
+      });
       res.json(dbUserData)
     })
     .catch(err =>res.status(400).json(err));
