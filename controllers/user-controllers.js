@@ -16,15 +16,23 @@ const userController = {
       return;
     }
     User.findOne({ _id: params.id })
-    .select('-__v')
-    .then(dbUserData => {
-      if (!dbUserData) {
-        res.status(404).json({ message: 'No user found with this id' });
-        return;
-      }
-      res.json(dbUserData)
-    })
-    .catch(err =>res.status(400).json(err));
+      .populate({
+        path: 'thoughts',
+        select: '-__v'
+      })
+      .populate({
+        path: 'friends',
+        select: '-__v'
+      })
+      .select('-__v')
+      .then(dbUserData => {
+        if (!dbUserData) {
+          res.status(404).json({ message: 'No user found with this id' });
+          return;
+        }
+        res.json(dbUserData)
+      })
+      .catch(err =>res.status(400).json(err));
   },
 
   addUser({ body }, res) {
@@ -69,7 +77,7 @@ const userController = {
         Thought.findOneAndDelete({  _id: thought._id })
           .then(console.log('Thought Deleted'));
       });
-      res.json(dbUserData)
+      res.json({ message: 'User and associated thoughts deleted!'});
     })
     .catch(err =>res.status(400).json(err));
   },
