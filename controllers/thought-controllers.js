@@ -27,6 +27,10 @@ const thoughtController = {
   },
 
   addThought({ body }, res) {
+    if (!Types.ObjectId.isValid(body.userId)) {
+      res.status(415).json({ message: 'Invalid thought id' });
+      return;
+    }
     Thought.create(body)
       .then(({ _id }) => {
         return User.findOneAndUpdate(
