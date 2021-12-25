@@ -41,6 +41,7 @@ const thoughtController = {
       })
       .then(newUserData => {
         if (!newUserData) {
+          // orphan thoughts can be created with invalid userId's, add validation in the future
           res.status(404).json({ message: 'No user found with this id' });
           return;
         }
