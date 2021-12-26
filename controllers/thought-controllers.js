@@ -79,7 +79,14 @@ const thoughtController = {
           res.status(404).json({ message: 'No thought found with this id' });
           return;
         }
-        // thoughtId is not removed from User thoughts array, find way to remove
+        // use the returned data to find user who made thought and pull _id from array
+        User.findOneAndUpdate(
+          { username: dbThoughtData.username},
+          { $pull: { thoughts: params.id }},
+          { new :true }
+        )
+          .catch(err => console.log(err));
+        // return data of deleted thought
         res.json(dbThoughtData);
       })
       .catch(err => res.status(400).json(err));
