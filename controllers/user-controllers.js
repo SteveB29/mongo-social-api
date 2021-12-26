@@ -71,12 +71,12 @@ const userController = {
         return;
       }
       // delete all thoughts associated with removed user
-      // figure out how to use mongoose pre or post middleware to remove thoughts
-      let thoughtsArray = dbUserData.thoughts;
-      thoughtsArray.forEach(thought => {
-        Thought.findOneAndDelete({  _id: thought._id })
-          .then(console.log('Thought Deleted'));
-      });
+      // figure out how to use pre or post middleware to remove thoughts
+      Thought.deleteMany({ _id: { $in: dbUserData.thoughts }})
+        .then(data => {
+          console.log(data);
+        })
+        .catch(err => console.log(err));
       res.json({ message: 'User and associated thoughts deleted!'});
     })
     .catch(err =>res.status(400).json(err));
