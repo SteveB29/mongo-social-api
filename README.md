@@ -5,7 +5,7 @@
 - Includes Get, Post, Put, and Delete routes for Users and Thoughts. Post and Delete routes for Friends and Reactions
 
 ## Video Walkthrough and GitHub Repo
-- Video Walkthrough coming soon!
+- [Video Walkthrough](https://watch.screencastify.com/v/YCQWnJTADMhGQZPn2rwT)
 - [GitHub Repository](https://github.com/SteveB29/mongo-social-api)
 
 ## Screenshots
